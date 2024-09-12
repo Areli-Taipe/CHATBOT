@@ -130,7 +130,7 @@ pares = [
     ],
     [
         r"descripcion",
-        ["Somo una institucion publica trabajamos con 29 años en el sector publico "]
+        ["Somos una institucion publica trabajamos con 29 años en el sector publico "]
     ]
 ]
 
