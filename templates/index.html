@@ -239,57 +239,61 @@ button:hover {
         <p>&copy; Areli Taipe & Harby Santos</p>
     </footer>
 
-    <script>
-        //Obtener el botón y el elemento de carga.
-        const button = document.getElementById('myButton');
-        const loadingDelay = 800; 
-        //Agregue un detector de eventos de clic al botón
-        button.addEventListener('click', sendMessage);
+   <script>
+    // Obtener el botón y el elemento de carga.
+    const button = document.getElementById('myButton'); // Selecciona el botón con ID 'myButton'.
+    const loadingDelay = 800; // Define un retraso de 800 ms para simular la respuesta del chatbot.
 
-        //Función para manejar el proceso de envío de mensajes.
-        function sendMessage() {
-            //Obtener el elemento de entrada del usuario y su valor.
-            const userInputElement = document.getElementById('userInput');
-            // Convertir a minúsculas 
-            let userInput = userInputElement.value.trim().toLowerCase(); 
-            // Elimina cualquier espacio inicial o final mediante trim().
-            // Mostrar el mensaje del usuario (antes de limpiar)
-            const chatMessages = document.getElementById('chatMessages');
-            chatMessages.innerHTML += `<div class="message user-message"><strong>Tú:</strong> ${userInput}</div>`;
+    // Agregar un detector de eventos de clic al botón.
+    button.addEventListener('click', sendMessage); // Cuando se hace clic en el botón, se llama a la función sendMessage.
 
-            document.getElementById('loading').style.display = 'block'; // Mostrar el spinner
-            
-            // Enviar el mensaje al servidor
-            fetch('/chat', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({message: userInput}),
-            })
-            .then(response => {
-                // Comprueba si la respuesta es exitosa.
-                if (!response.ok) {
-                    throw new Error('Error en la respuesta del servidor: ' + response.status);
-                }
-                return response.json();
-            })
-            .then(data => {
-                // Retrasa la respuesta
-                setTimeout(() => {
-                    // Mostrar la respuesta del chatbot
-                    chatMessages.innerHTML += `<div class="message bot-message"><strong>Chatbot:</strong> ${data.response}</div>`;
-                    chatMessages.scrollTop = chatMessages.scrollHeight; // Desplazar hacia abajo
-                    document.getElementById('loading').style.display = 'none'; // Ocultar el spinner
-                }, loadingDelay);
-            })
-            .catch(error => {
-                console.error('Error:', error);
-            });
+    // Función para manejar el proceso de envío de mensajes.
+    function sendMessage() {
+        // Obtener el elemento de entrada del usuario y su valor.
+        const userInputElement = document.getElementById('userInput'); // Selecciona el campo de entrada del usuario.
+        // Convertir a minúsculas y eliminar espacios iniciales y finales.
+        let userInput = userInputElement.value.trim().toLowerCase(); // Obtiene el valor del input, lo limpia y lo convierte a minúsculas.
 
-            // Limpiar el campo de entrada
-            userInputElement.value = '';
-        }
-    </script>
+        // Mostrar el mensaje del usuario (antes de limpiar).
+        const chatMessages = document.getElementById('chatMessages'); // Selecciona el área donde se mostrarán los mensajes.
+        // Agrega el mensaje del usuario al área de mensajes.
+        chatMessages.innerHTML += `<div class="message user-message"><strong>Tú:</strong> ${userInput}</div>`; 
+
+        // Muestra el spinner de carga.
+        document.getElementById('loading').style.display = 'block'; // Cambia el estilo del elemento de carga a 'block' para que sea visible.
+
+        // Enviar el mensaje al servidor.
+        fetch('/chat', {
+            method: 'POST', // Indica que se está utilizando el método POST.
+            headers: {
+                'Content-Type': 'application/json', // Especifica que el cuerpo de la solicitud es JSON.
+            },
+            body: JSON.stringify({message: userInput}), // Convierte el mensaje del usuario a formato JSON.
+        })
+        .then(response => {
+            // Comprueba si la respuesta es exitosa.
+            if (!response.ok) { // Verifica si la respuesta no está en el rango 200-299.
+                throw new Error('Error en la respuesta del servidor: ' + response.status); // Lanza un error con el estado de la respuesta.
+            }
+            return response.json(); // Convierte la respuesta a JSON si es exitosa.
+        })
+        .then(data => {
+            // Retrasa la respuesta del chatbot.
+            setTimeout(() => {
+                // Mostrar la respuesta del chatbot.
+                chatMessages.innerHTML += `<div class="message bot-message"><strong>Chatbot:</strong> ${data.response}</div>`; // Agrega la respuesta del chatbot al área de mensajes.
+                chatMessages.scrollTop = chatMessages.scrollHeight; // Desplaza hacia abajo para mostrar el último mensaje.
+                document.getElementById('loading').style.display = 'none'; // Oculta el spinner de carga.
+            }, loadingDelay); // Espera el tiempo definido antes de mostrar la respuesta.
+        })
+        .catch(error => {
+            console.error('Error:', error); // Si hay un error, lo imprime en la consola.
+        });
+
+        // Limpiar el campo de entrada.
+        userInputElement.value = ''; // Borra el contenido del campo de entrada del usuario.
+    }
+</script>
+
 </body>
 </html>
