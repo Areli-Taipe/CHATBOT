@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -10,14 +11,13 @@
     font-family: Arial, sans-serif;
     margin: 0;
     padding: 0;
-    background-color: #bcd5f3;
+    background-color: white;
 }
 
 header {
     padding: 20px;
     text-align: center;
     color: white;
-    text-shadow: #02e3f7 0 0 20px;
     background-image: url(static/img/fondo1.webp);
     background-size: cover;
     background-position: center center;
@@ -44,7 +44,7 @@ nav li a{
     text-decoration: none;
     color: white;
     font-family: Verdana, Geneva, Tahoma, sans-serif;
-    font-size: medium;
+    font-size: 15px;
     font-weight: bolder;
 }
 .main{
@@ -55,7 +55,7 @@ nav li a{
     padding: 20px; /* Espacio interior del contenedor principal */
 }
 main section{
-    background-color: skyblue;
+    background: radial-gradient(circle at center, #cff169,#84f6fa);
     border-radius: 15px;
     flex: 1;
     min-width: 280px; /* Ajusta el ancho mínimo */
@@ -65,7 +65,6 @@ main section{
     text-align: center;
 }
 .item {
-    border: 1px solid black;
     border-radius: 15px;
     padding: 10px;
     text-align: center;
@@ -79,7 +78,7 @@ main section{
     margin: 0 auto; /* Centra la imagen dentro del contenedor */
 }
 footer {
-    background-color: rgb(0, 44, 166);
+    background-color: rgb(2, 39, 143);
     color: white;
     margin: 0;
     padding: 0;
@@ -93,7 +92,7 @@ footer {
     height: auto; /* Ajustado a auto para mejor adaptabilidad */
     margin: 20px auto;
     border: 1px solid #a6dbee;
-    background-color: #83c5eb;
+    background: radial-gradient(circle at center, #cff169,#5a7ee8);
     padding: 10px;
     border-radius: 25px;
 }
@@ -207,7 +206,7 @@ button:hover {
 <body>
     <header>
         <h1>Colegio José Gálvez</h1>
-        <img src="static/img/insignia.jpg" alt=""> <!-- Cambiado a /static/img/ -->
+        <img src="static/img/insignia.jpg" alt="">
         <nav>
             <ul>
                 <li><a href="#">Inicio</a></li>
@@ -222,7 +221,6 @@ button:hover {
             <section class="item">
                 <h2>Bienvenidos</h2>
                 <p>Le damos la bienvenida a la pagina web de la Institucion Educativa Jose Galvez.</p>
-                <img src="static/img/img1-removebg-preview.png" alt=""> <!-- Cambiado a /static/img/ -->
             </section>
             <section class="item">
                 <h2>Nuestro Colegio</h2>
@@ -234,12 +232,12 @@ button:hover {
     <div id="chat-container">
         <div id="chatMessages"></div>
         <input type="text" id="userInput" placeholder="Escribe tu mensaje...">
-        <button id="myButton" >Enviar</button>
+        <button id="myButton">Enviar</button>
         <div id="loading" style="display: none;">Cargando...</div>
     </div>
 
     <footer>
-        <p>&copy; Colegio José Gálvez 2024</p>
+        <p>&copy; Areli Taipe & Harby Santos</p>
     </footer>
 
     <script>
@@ -248,45 +246,44 @@ button:hover {
         button.addEventListener('click', sendMessage);
 
         function sendMessage() {
-            const userInput = document.getElementById('userInput').value;
-            document.getElementById('loading').style.display = 'block'; // Mostrar el spinner
-            const chatMessages = document.getElementById('chatMessages');
-
+            const userInputElement = document.getElementById('userInput');
+            let userInput = userInputElement.value.trim().toLowerCase(); // Convertir a minúsculas
+            
             // Mostrar el mensaje del usuario (antes de limpiar)
+            const chatMessages = document.getElementById('chatMessages');
             chatMessages.innerHTML += `<div class="message user-message"><strong>Tú:</strong> ${userInput}</div>`;
 
             // Enviar el mensaje al servidor
-        fetch('/chat', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({message: userInput}),
-        })
-        
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Error en la respuesta del servidor: ' + response.status);
-        }
-        return response.json();
-        })
+            document.getElementById('loading').style.display = 'block'; // Mostrar el spinner
+            
+            fetch('/chat', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({message: userInput}),
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Error en la respuesta del servidor: ' + response.status);
+                }
+                return response.json();
+            })
+            .then(data => {
+                // Retrasa la respuesta
+                setTimeout(() => {
+                    // Mostrar la respuesta del chatbot
+                    chatMessages.innerHTML += `<div class="message bot-message"><strong>Chatbot:</strong> ${data.response}</div>`;
+                    chatMessages.scrollTop = chatMessages.scrollHeight; // Desplazar hacia abajo
+                    document.getElementById('loading').style.display = 'none'; // Ocultar el spinner
+                }, loadingDelay);
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
 
-        .then(data => {
-            // Retrasa la respuesta
-            setTimeout(() => {
-            // Mostrar la respuesta del chatbot
-            chatMessages.innerHTML += `<div class="message bot-message"><strong>Chatbot:</strong> ${data.response}</div>`;
-            chatMessages.scrollTop = chatMessages.scrollHeight; // Desplazar hacia abajo
-            document.getElementById('loading').style.display = 'none'; // Ocultar el spinner
-        }, loadingDelay);
-        })
-
-        .catch(error => {
-            console.error('Error:', error);
-        });
-
-        // Limpiar el campo de entrada
-        document.getElementById('userInput').value = '';
+            // Limpiar el campo de entrada
+            userInputElement.value = '';
         }
     </script>
 </body>
